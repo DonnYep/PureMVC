@@ -6,5 +6,5 @@
 
 - 使用.Net Standard 2.0 框架，支持使用.Net Framework、.Net Core 的项目。
 
-- ![PureMVC](https://user-images.githubusercontent.com/44013616/130308024-b69361e3-60f8-4da0-9496-410deb3bb2cc.png)
+![PureMVC](https://github.com/DonnYep/PureMVC/blob/main/Pic/PureMVC.png)
 
