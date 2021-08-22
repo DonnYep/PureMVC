@@ -14,17 +14,16 @@ namespace PureMVC
         {
             lock (locker)
             {
-                if (!mediatorDict.ContainsKey(mediator.MediatorName))
+                if (mediatorDict.ContainsKey(mediator.MediatorName))
+                    return;
+                mediatorDict.Add(mediator.MediatorName, mediator);
+                var bindedKeys = mediator.EventKeys;
+                if (bindedKeys != null)
                 {
-                    mediatorDict.Add(mediator.MediatorName, mediator);
-                    var bindedKeys = mediator.EventKeys;
-                    if (bindedKeys != null)
+                    var length = bindedKeys.Count;
+                    for (int i = 0; i < length; i++)
                     {
-                        var length = bindedKeys.Count;
-                        for (int i = 0; i < length; i++)
-                        {
-                            Controller.Instance.AddListener(bindedKeys[i], mediator.HandleEvent);
-                        }
+                        Controller.Instance.AddListener(bindedKeys[i], mediator.HandleEvent);
                     }
                 }
             }
@@ -35,16 +34,15 @@ namespace PureMVC
             Mediator mediator = null;
             lock (locker)
             {
-                if (mediatorDict.ContainsKey(mediatorName))
+                if (!mediatorDict.ContainsKey(mediatorName))
+                    return;
+                mediator = mediatorDict[mediatorName];
+                mediatorDict.Remove(mediatorName);
+                var bindedKeys = mediator.EventKeys;
+                var length = bindedKeys.Count;
+                for (int i = 0; i < length; i++)
                 {
-                    mediator = mediatorDict[mediatorName];
-                    mediatorDict.Remove(mediatorName);
-                    var bindedKeys = mediator.EventKeys;
-                    var length = bindedKeys.Count;
-                    for (int i = 0; i < length; i++)
-                    {
-                        Controller.Instance.RemoveListener(bindedKeys[i], mediator.HandleEvent);
-                    }
+                    Controller.Instance.RemoveListener(bindedKeys[i], mediator.HandleEvent);
                 }
             }
             mediator.OnRemove();
@@ -64,9 +62,9 @@ namespace PureMVC
                 return mediatorDict.ContainsKey(mediatorName);
             }
         }
-        public void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
+        public void Dispatch(INotifyArgs notifyArgs)
         {
-            Controller.Instance.Dispatch(actionKey, sender, notifyArgs);
+            Controller.Instance.Dispatch(notifyArgs);
         }
         protected virtual void OnInitialization() { }
     }

@@ -5,6 +5,6 @@ namespace PureMVC
 {
     public abstract class Command
     {
-        public abstract void ExecuteCommand (object sender,NotifyArgs notifyArgs);
+        public abstract void ExecuteCommand (INotifyArgs notifyArgs);
     }
 }

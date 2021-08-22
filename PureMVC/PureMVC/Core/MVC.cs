@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PureMVC
 {
-    public static class MVC
+    public class MVC
     {
         #region Controller
         public static void RegisterCommand(string actionKey, Type cmdType)
@@ -48,17 +48,13 @@ namespace PureMVC
         {
             View.Instance.RemoveMediator(mediatorName);
         }
-        public static void Dispatch(string actionKey)
+        public static void Dispatch(INotifyArgs notifyArgs)
         {
-            View.Instance.Dispatch(actionKey, null, null);
+            View.Instance.Dispatch(notifyArgs);
         }
-        public static void Dispatch(string actionKey, NotifyArgs notifyArgs)
+        public static void Dispatch(string notifyName)
         {
-            View.Instance.Dispatch(actionKey, null, notifyArgs);
-        }
-        public static void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
-        {
-            View.Instance.Dispatch(actionKey, sender, notifyArgs);
+            View.Instance.Dispatch(new NotifyArgs(notifyName));
         }
         #endregion
         #region Model

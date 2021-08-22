@@ -6,7 +6,7 @@ namespace PureMVC
     {
         protected Dictionary<string, Type> cmdTypeDict;
         protected Dictionary<Type, Queue<Command>> typeCmdQueueDict;
-        protected Dictionary<string, IList<EventHandler<NotifyArgs>>> eventDict;
+        protected Dictionary<string, IList<Action<INotifyArgs>>> eventDict;
 
         protected Type cmdType = typeof(Command);
         readonly protected object locker = new object();
@@ -14,7 +14,7 @@ namespace PureMVC
         {
             cmdTypeDict = new Dictionary<string, Type>();
             typeCmdQueueDict = new Dictionary<Type, Queue<Command>>();
-            eventDict = new Dictionary<string, IList<EventHandler<NotifyArgs>>>();
+            eventDict = new Dictionary<string, IList<Action<INotifyArgs>>>();
             OnInitialization();
         }
         /// <summary>
@@ -47,16 +47,13 @@ namespace PureMVC
         }
         /// <summary>
         /// 进行消息派发；
-        /// MVVM架构中,VM占主导地位，因此执行顺序为VM>V
         /// </summary>
-        /// <param name="actionKey">消息码</param>
-        /// <param name="sender">标准事件模型中的发送者</param>
-        /// <param name="notifyArgs">消息模型</param>
-        internal virtual void Dispatch(string actionKey, object sender, NotifyArgs notifyArgs)
+        internal virtual void Dispatch(INotifyArgs notifyArgs)
         {
+            var actionKey = notifyArgs.NotifyName;
             Command cmd = null;
             Queue<Command> cmdQueue = null;
-            IList<EventHandler<NotifyArgs>> handlerList = null;
+            IList<Action<INotifyArgs>> handlerList = null;
             lock (locker)
             {
                 if (cmdTypeDict.TryGetValue(actionKey, out var type))
@@ -76,32 +73,32 @@ namespace PureMVC
                 }
                 eventDict.TryGetValue(actionKey, out handlerList);
             }
-            cmd?.ExecuteCommand(sender, notifyArgs);
+            cmd?.ExecuteCommand(notifyArgs);
             if (handlerList != null)
             {
                 var length = handlerList.Count;
                 for (int i = 0; i < length; i++)
                 {
-                    handlerList[i]?.Invoke(sender, notifyArgs);
+                    handlerList[i]?.Invoke(notifyArgs);
                 }
             }
             cmdQueue?.Enqueue(cmd);
         }
-        internal virtual void AddListener(string actionKey, EventHandler<NotifyArgs> notifyHandler)
+        internal virtual void AddListener(string actionKey, Action<INotifyArgs> notifyHandler)
         {
             lock (locker)
             {
-                IList<EventHandler<NotifyArgs>> handlerList;
+                IList<Action<INotifyArgs>> handlerList;
                 if (!eventDict.TryGetValue(actionKey, out handlerList)) 
                 {
-                    handlerList = new List<EventHandler<NotifyArgs>>();
+                    handlerList = new List<Action<INotifyArgs>>();
                     eventDict.Add(actionKey, handlerList);
                 }
                 if (!handlerList.Contains(notifyHandler))
                     handlerList.Add(notifyHandler);
             }
         }
-        internal virtual void RemoveListener(string actionKey, EventHandler<NotifyArgs> notifyHandler)
+        internal virtual void RemoveListener(string actionKey, Action<INotifyArgs> notifyHandler)
         {
             lock (locker)
             {

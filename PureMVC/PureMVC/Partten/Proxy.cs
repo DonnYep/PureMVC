@@ -5,17 +5,16 @@ namespace PureMVC
 {
     public abstract class Proxy
     {
-        public abstract string ProxyName { get; protected set; }
+        public const string NAME = "Proxy";
+        public virtual string ProxyName { get; protected set; }
         public object Data { get; set; }
-        public Proxy() { }
-        public Proxy(string proxyName):this(proxyName,null){}
-        public Proxy(string proxyName,object data)
+        public Proxy(string proxyName) : this(proxyName, null) { }
+        public Proxy(string proxyName, object data)
         {
-            ProxyName = proxyName;
+            ProxyName = string.IsNullOrEmpty(proxyName) ? NAME : proxyName;
             Data = data;
         }
         public abstract void OnRegister();
-        public abstract void OnRemove();
-
+        public virtual void OnRemove() { }
     }
 }

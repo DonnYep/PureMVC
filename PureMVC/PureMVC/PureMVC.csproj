@@ -4,8 +4,4 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Core\View.cs~RF12f3ce31.TMP" />
-  </ItemGroup>
-
 </Project>
