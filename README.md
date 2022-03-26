@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/DonnYep/PureMVC/blob/main/LICENSE)
-# PureMC
+# PureMVC
 
 - 此PureMVC库使用Action委托对PureMVC中的observer进行替换，并进行简易化改造。支持反射注册各个代理对象，线程安全。
 
